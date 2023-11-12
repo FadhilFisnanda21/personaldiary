@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error Page</title>
+</head>
+<body>
+    <h1>Error Occurred</h1>
+    <p>{{ msg }}</p>
+
+    <!-- Formulir untuk menambahkan kata yang disarankan -->
+    <form id="suggestWordForm">
+        <label for="word">Suggest a word:</label>
+        <input type="text" id="word" name="word" required>
+        <label for="definitions">Definitions (comma-separated):</label>
+        <input type="text" id="definitions" name="definitions" required>
+        <button type="submit">Submit Suggestion</button>
+    </form>
+
+    <div id="message"></div>
+
+    <script>
+        // Menangani pengiriman formulir ke Flask untuk menambahkan kata yang disarankan
+        document.getElementById('suggestWordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var word = document.getElementById('word').value;
+            var definitions = document.getElementById('definitions').value;
+
+            fetch('/add_suggested_word', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ word: word, definitions: definitions })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('message').innerText = data.message;
+            })
+            .catch(error => {
+                document.getElementById('message').innerText = 'An error occurred while adding the suggested word.';
+            });
+        });
+    </script>
+   
+</body>
+</html>
